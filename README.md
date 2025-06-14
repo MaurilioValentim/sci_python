@@ -99,8 +99,6 @@ Após a criação do ambiente virtual:
 - Clique novamente no **número da versão do Python** no canto inferior direito do VSCode.
 - Selecione o Python localizado em `.venv`
 
-📸 *[Adicione outro print aqui, se desejar, mostrando a lista de intérpretes]*
-
 ---
 
 ### 5. Instalar Dependências
@@ -142,7 +140,7 @@ No Windows, consulte a porta no **Gerenciador de Dispositivos > Portas (COM e LP
 No terminal (com o ambiente virtual ativado), execute:
 
 ```bash
-python sci_python.py
+python main.py
 ```
 
 ---
