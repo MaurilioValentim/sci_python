@@ -1,4 +1,4 @@
-# 📡 sci_python
+# 📡 Exemplo SCI - Python
 
 Projeto em Python para comunicação serial com o microcontrolador **TMS320F28379D** via interface SCI.  
 Permite **enviar** e **receber** números inteiros com base em um protocolo simples, compatível com o firmware embarcado no DSP.
