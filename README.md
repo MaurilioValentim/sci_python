@@ -27,17 +27,15 @@ sci_python/
 
 ### PC (Python)
 
-* Python 3.8 ou superior
+* Python 3.11 ou superior
 * Visual Studio Code (VSCode)
 * Extensão Python instalada no VSCode
 * Driver da porta COM (FTDI, XDS, etc.)
 
 ### DSP (Firmware)
 
-* Code Composer Studio (CCS)
-* Placa com o microcontrolador TMS320F28379D
-* Cabo USB com interface serial (ou onboard XDS)
-* Energia para o DSP
+* Code Composer Studio (CCS) v12
+* Lauchpad 28379D
 
 ---
 
@@ -79,8 +77,6 @@ Substitua `seuusuario` pelo seu nome de usuário no GitHub.
 2. Vá em `Project > Build Project` ou clique no martelo (🔨).
 3. Vá em `Run > Debug` para carregar o firmware.
 4. Clique no botão `Resume (F8)` para rodar o código.
-
-> Certifique-se de que o firmware permanece rodando após o reset.
 
 ---
 
