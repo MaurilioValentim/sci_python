@@ -9,8 +9,8 @@
 #define SRC_SCICOMM_H_
 
 
-#define INT_SIZE 2
-#define PROTOCOL_HEADER_SIZE 3
+#define INT_SIZE 2U
+#define PROTOCOL_HEADER_SIZE 3U
 
 typedef enum
 {

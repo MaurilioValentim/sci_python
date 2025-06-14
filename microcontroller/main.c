@@ -37,10 +37,6 @@ void main(void)
                 case CMD_SEND_INT:
                     protocolSendInt(SCI0_BASE, g_dado);
                     break;
-
-                default:
-                    // Comando desconhecido
-                    break;
             }
 
             // Limpa status de interrupção e reseta comando
@@ -55,10 +51,10 @@ void main(void)
 //
 __interrupt void INT_SCI0_RX_ISR(void)
 {
-    uint16_t header[3];
+    uint16_t header[PROTOCOL_HEADER_SIZE];
     uint16_t cmd;
 
-    SCI_readCharArray(SCI0_BASE, header, 3U);
+    SCI_readCharArray(SCI0_BASE, header, PROTOCOL_HEADER_SIZE);
     cmd = header[0];
     g_prot_header.data_len = header[1] | (header[2] << 8);
     g_prot_header.cmd = (cmd < CMD_COUNT)? (SCI_Command_e)cmd : CMD_NONE;
