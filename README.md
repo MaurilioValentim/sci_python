@@ -1,34 +1,56 @@
-# 📡 Exemplo SCI - Python
+# 📡 Comunicação SCI – TMS320F28379D + Python
 
-Projeto em Python para comunicação serial com o microcontrolador **TMS320F28379D** via interface SCI.  
-Permite **enviar** e **receber** números inteiros com base em um protocolo simples, compatível com o firmware embarcado no DSP.
+Projeto de comunicação serial entre o microcontrolador **TMS320F28379D** e um computador via protocolo SCI, utilizando **firmware em C (CCS)** e **interface de controle em Python (VSCode)**.
+
+Permite o **envio** e a **recepção** de inteiros (`int16_t`) usando um protocolo simples.
+
+---
+
+## 🗂️ Estrutura do Projeto
+
+```
+sci_python/
+├── images/             # Imagens usadas no README
+│   └── VSCodePrint.png
+├── microcontroller/    # Projeto CCS para o TMS320F28379D
+│   ├── .project
+|   ├── ...
+│   └── main.c
+├── python/             # Código Python para executar no PC
+│   └── sci_python.py
+└── README.md
+```
 
 ---
 
 ## 🧰 Requisitos
 
-- Python 3.8 ou superior
-- Visual Studio Code (VSCode)
-- Extensão Python instalada no VSCode
-- Firmware SCI já programado no TMS320F28379D
-- Driver da porta COM (XDS / FTDI etc.)
+### PC (Python)
+
+* Python 3.8 ou superior
+* Visual Studio Code (VSCode)
+* Extensão Python instalada no VSCode
+* Driver da porta COM (FTDI, XDS, etc.)
+
+### DSP (Firmware)
+
+* Code Composer Studio (CCS)
+* Placa com o microcontrolador TMS320F28379D
+* Cabo USB com interface serial (ou onboard XDS)
+* Energia para o DSP
 
 ---
 
+## 🔧 Passo a Passo
+
 ### 1. Obter o Projeto (📌 Faça o Fork)
 
-Antes de clonar, você deve **fazer um fork** deste repositório para a sua conta do GitHub:
-
-1. Acesse o repositório original no GitHub:  
+1. Acesse:
    👉 [`https://github.com/Pguilhermem/sci_python`](https://github.com/Pguilhermem/sci_python)
 
-2. Clique no botão `Fork` no canto superior direito da página.
+2. Clique no botão `Fork`.
 
-3. Escolha sua conta como destino do fork.
-
-4. Após o fork, vá até **o repositório copiado na sua conta** e copie o link de clonagem (HTTPS ou SSH).
-
-5. No seu terminal, execute:
+3. Depois do fork, clone o repositório:
 
 ```bash
 git clone https://github.com/seuusuario/sci_python.git
@@ -39,12 +61,37 @@ Substitua `seuusuario` pelo seu nome de usuário no GitHub.
 
 ---
 
-### 2. Abrir o Projeto no VSCode
+## ⚙️ Parte 1 – Executar Firmware no TMS320F28379D (CCS)
+
+### 1. Abrir o CCS e Importar o Projeto
+
+1. No CCS, vá em `File > Import...`.
+2. Selecione a opção:
+   ✅ `Code Composer Studio > CCS Projects`
+3. Em `Select Search-directory`, clique em `Browse...` e selecione a pasta:
+   `sci_python/microcontroller/`
+4. **Desmarque** a opção `Copy projects into workspace`.
+5. Clique em `Finish`.
+
+### 2. Compilar e Gravar o Código
+
+1. Conecte a placa ao PC.
+2. Vá em `Project > Build Project` ou clique no martelo (🔨).
+3. Vá em `Run > Debug` para carregar o firmware.
+4. Clique no botão `Resume (F8)` para rodar o código.
+
+> Certifique-se de que o firmware permanece rodando após o reset.
+
+---
+
+## 🖥️ Parte 2 – Executar a Interface Python (VSCode)
+
+### 1. Abrir o Projeto no VSCode
 
 Abra a pasta do projeto no VSCode:
 
 - `Arquivo > Abrir Pasta...`  
-- Selecione a pasta onde está o script `sci_python.py`
+- Selecione a pasta onde está o script `main.py`
 
 ---
 
