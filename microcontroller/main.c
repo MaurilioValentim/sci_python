@@ -4,45 +4,64 @@
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"
+#include "scicomm.h"
+
+volatile Protocol_Header_t g_prot_header = {CMD_NONE,0};
+volatile int g_dado;
 
 //
-// Main
+// Função Principal
 //
 void main(void)
 {
-    // Device Initialization
+    // Inicialização do dispositivo
     Device_init();
-    //
-    // Initializes PIE and clears PIE registers. Disables CPU interrupts.
-    //
     Interrupt_initModule();
-    //
-    // Initializes the PIE vector table with pointers to the shell Interrupt
-    // Service Routines (ISR).
-    //
     Interrupt_initVectorTable();
-
     Board_init();
 
-    //
-    // Enable Global Interrupt (INTM) and realtime interrupt (DBGM)
-    //
+    // Habilita interrupções globais e de tempo real
     EINT;
     ERTM;
 
-    while(1)
+    while (1)
     {
-    }
+        if (g_prot_header.cmd != CMD_NONE)
+        {
+            switch (g_prot_header.cmd)
+            {
+                case CMD_RECEIVE_INT:
+                    g_dado = protocolReceiveInt(SCI0_BASE);
+                    break;
 
+                case CMD_SEND_INT:
+                    protocolSendInt(SCI0_BASE, g_dado);
+                    break;
+
+                default:
+                    // Comando desconhecido
+                    break;
+            }
+
+            // Limpa status de interrupção e reseta comando
+            SCI_clearInterruptStatus(SCI0_BASE, SCI_INT_RXFF);
+            g_prot_header.cmd = CMD_NONE;
+        }
+    }
 }
 
+//
+// Rotina de Interrupção da SCI (Recepção)
+//
 __interrupt void INT_SCI0_RX_ISR(void)
 {
-    char data;
-    data = SCI_readCharBlockingFIFO(SCI0_BASE);
-    SCI_writeCharBlockingFIFO(SCI0_BASE,data);
+    uint16_t header[3];
+    uint16_t cmd;
 
-    SCI_clearInterruptStatus(SCI0_BASE, SCI_INT_RXFF);
+    SCI_readCharArray(SCI0_BASE, header, 3U);
+    cmd = header[0];
+    g_prot_header.data_len = header[1] | (header[2] << 8);
+    g_prot_header.cmd = (cmd < CMD_COUNT)? (SCI_Command_e)cmd : CMD_NONE;
+
     Interrupt_clearACKGroup(INT_SCI0_RX_INTERRUPT_ACK_GROUP);
 }
-
