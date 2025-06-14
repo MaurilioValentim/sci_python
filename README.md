@@ -58,7 +58,7 @@ Você pode criar o ambiente **graficamente ou pelo terminal**:
 2. Uma lista de ambientes será exibida. Clique em **"Criar Ambiente"** ou selecione **Python: Create Environment**.
 3. Escolha a opção **Venv** e aguarde a criação do ambiente virtual `.venv`.
 
-![Criação do ambiente virtual](images\VSCodePrint.png)
+![Criação do ambiente virtual]([images\VSCodePrint.png](https://github.com/Pguilhermem/sci_python/blob/main/images/VSCodePrint.png))
 
 #### 🧪 Opção 2: Pelo terminal (modo manual)
 
