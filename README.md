@@ -17,7 +17,7 @@ sci_python/
 |   ├── ...
 │   └── main.c
 ├── python/             # Código Python para executar no PC
-│   └── sci_python.py
+│   └── main.py
 └── README.md
 ```
 
