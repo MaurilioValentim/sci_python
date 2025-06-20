@@ -6,9 +6,11 @@
 #include "board.h"
 #include "scicomm.h"
 
+#define NUM_PONTOS_WAVEFORM 1000
+
 volatile Protocol_Header_t g_prot_header = {CMD_NONE,0};
 volatile int g_dado;
-
+int waveform[NUM_PONTOS_WAVEFORM];
 //
 // Função Principal
 //
@@ -36,6 +38,14 @@ void main(void)
 
                 case CMD_SEND_INT:
                     protocolSendInt(SCI0_BASE, g_dado);
+                    break;
+
+                case CMD_RECEIVE_WAVEFORM:
+                    protocolReceiveWaveForm(SCI0_BASE, waveform);
+                    break;
+
+                case CMD_SEND_WAVEFORM:
+                    protocolSendWaveForm(SCI0_BASE, waveform);
                     break;
             }
 

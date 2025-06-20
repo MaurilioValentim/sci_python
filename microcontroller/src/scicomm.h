@@ -17,8 +17,9 @@ typedef enum
     CMD_NONE = 0,
     CMD_RECEIVE_INT,
     CMD_SEND_INT,
-    CMD_COUNT
-
+    CMD_RECEIVE_WAVEFORM,   //
+    CMD_SEND_WAVEFORM,       //
+    CMD_COUNT,
 } SCI_Command_e;
 
 typedef struct
@@ -31,7 +32,8 @@ typedef struct
 
 int protocolReceiveInt(unsigned int sci_base);
 void protocolSendInt(unsigned int sci_base,int data);
-
+void protocolReceiveWaveForm(unsigned int sci_base, int waveform []);
+void protocolSendWaveForm(unsigned int sci_base, int waveform []);
 
 
 
