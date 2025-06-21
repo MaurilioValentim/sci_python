@@ -6,11 +6,11 @@
 #include "board.h"
 #include "scicomm.h"
 
-#define NUM_PONTOS_WAVEFORM 1000
+#define NUM_PONTOS_WAVEFORM 500
 
 volatile Protocol_Header_t g_prot_header = {CMD_NONE,0};
 volatile int g_dado;
-int waveform[NUM_PONTOS_WAVEFORM];
+float waveform[NUM_PONTOS_WAVEFORM];
 //
 // Função Principal
 //

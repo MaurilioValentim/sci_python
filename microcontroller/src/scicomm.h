@@ -32,8 +32,8 @@ typedef struct
 
 int protocolReceiveInt(unsigned int sci_base);
 void protocolSendInt(unsigned int sci_base,int data);
-void protocolReceiveWaveForm(unsigned int sci_base, int waveform []);
-void protocolSendWaveForm(unsigned int sci_base, int waveform []);
+void protocolReceiveWaveForm(unsigned int sci_base, float waveform []);
+void protocolSendWaveForm(unsigned int sci_base, float waveform []);
 
 
 

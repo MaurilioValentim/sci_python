@@ -16,6 +16,8 @@ CMD_SEND_INT    = 2 # Comando para o PC pedir um int para o 28379D
 CMD_RECEIVE_WAVEFORM = 3
 CMD_SEND_WAVEFORM = 4
 
+NUM_PONTOS_WAVEFORM = 500
+
 def main():
     """Funcao principal que gerencia a conexao e o menu do usuario."""
     print("--- Terminal de Teste SCI para 28379D ---")
@@ -114,70 +116,80 @@ def receive_int(ser_connection):
 def send_waveform(ser_connection):
     """
     Gera uma senoide, envia a quantidade de pontos para o microcontrolador,
-    e em seguida envia todos os pontos da forma de onda.
+    e em seguida envia cada valor separado em parte inteira e decimal (ambas com sinal).
     """
     try:
         freq = int(input("Digite a frequencia da Forma de onda (entre -32768 e 32767): "))
         amp = int(input("Digite a Amplitude da Forma de onda (entre -32768 e 32767): "))
-        fase = int(input("Digite a Fase da Forma de onda (entre -32768 e 32767): "))
-        fs = 1000
+        fase = float(input("Digite a Fase da Forma de onda (em radianos): "))
+        fs = NUM_PONTOS_WAVEFORM
         duracao = 1
 
         # Tempo
         t = np.linspace(0, duracao, int(fs * duracao), endpoint=False)
 
-        # Geração da Senoide
+        # Geração da senoide
         senoide = amp * np.sin(2 * np.pi * freq * t + fase)
-
-        # Normaliza e converte para int16
-        senoide_int = np.clip(np.round(senoide), -32768, 32767).astype(np.int16)
-        num_pontos = len(senoide_int)
+        senoide_float = senoide.astype(np.float32)
+        num_pontos = len(senoide_float)
 
         # Mostra a forma de onda
-        plotagem(senoide_int)
+        plotagem(senoide_float)
 
-        # Envia o cabeçalho com o número de pontos
-        # CMD_RECEIVE_WAVEFORM = 4, data_len = 2 (pois vamos enviar só um int16 com o número de pontos)
-        header_packet = struct.pack('<Bhh', CMD_RECEIVE_WAVEFORM, 2, num_pontos)
+        # Envia o cabeçalho com número de pontos
+        # CMD_RECEIVE_WAVEFORM, data_len=4 (2 int16_t por ponto)
+        header_packet = struct.pack('<Bhh', CMD_RECEIVE_WAVEFORM, 4, num_pontos)
         ser_connection.write(header_packet)
         time.sleep(0.01)
 
-        # Envia os pontos da forma de onda (sem cabeçalho por ponto)
-        for valor in senoide_int:
-            data_packet = struct.pack('<h', valor)  # Apenas os dados, sem comando
-            ser_connection.write(data_packet)
-            time.sleep(0.001)  # Pequeno delay para evitar sobrecarga no buffer
+        # Envia cada valor da forma de onda como dois inteiros: parte inteira + parte decimal
+        for valor in senoide_float:
+            parte_inteira = int(valor)
+            parte_decimal = int(abs(valor - parte_inteira) * 10000)
 
-        print("Senoide enviada com sucesso.")
+            # Aplica o mesmo sinal da parte inteira à parte decimal
+            if valor < 0:
+                parte_decimal = -parte_decimal
+
+            data_packet = struct.pack('<hh', parte_inteira, parte_decimal)
+            ser_connection.write(data_packet)
+            time.sleep(0.001)
+
+        print("Senoide enviada com sucesso como duas partes (int16).")
 
     except ValueError:
-        print("ERRO: Entrada invalida. Por favor, digite um numero inteiro.")
+        print("ERRO: Entrada invalida. Por favor, digite um numero válido.")
     except Exception as e:
         print(f"Ocorreu um erro inesperado: {e}")
+
+
 
 
 def receive_waveform(ser_connection):
     """
     Solicita todos os pontos da senoide ao microcontrolador via serial.
+    Recebe dois inteiros por ponto: parte inteira e parte decimal (escalada por 10000).
     """
     try:
-        num_points = 1000
+        num_points = NUM_PONTOS_WAVEFORM
         # Envia o comando solicitando os dados da senoide
         request_packet = struct.pack('<Bh', CMD_SEND_WAVEFORM, 0)
         print(f"Enviando comando de solicitação: {request_packet.hex(' ')}")
         ser_connection.write(request_packet)
 
-        # Espera os dados: 2 bytes por ponto
-        total_bytes = num_points * 2
+        # Cada ponto é composto por 2 int16 => 4 bytes
+        total_bytes = num_points * 4
         response_data = ser_connection.read(total_bytes)
 
         if len(response_data) != total_bytes:
             print(f"ERRO: Esperado {total_bytes} bytes, mas recebeu {len(response_data)}.")
             return None
 
-        # Desempacota todos os valores int16
-        formato = f'<{num_points}h'  # Exemplo: '<1000h'
-        senoide_recebida = struct.unpack(formato, response_data)
+        senoide_recebida = []
+        for i in range(0, total_bytes, 4):
+            parte_inteira, parte_decimal = struct.unpack('<hh', response_data[i:i+4])
+            valor = parte_inteira + (parte_decimal / 10000.0)
+            senoide_recebida.append(valor)
 
         print("Todos os dados foram recebidos com sucesso.")
 
@@ -185,6 +197,8 @@ def receive_waveform(ser_connection):
 
     except Exception as e:
         print(f"Ocorreu um erro inesperado: {e}")
+
+
    
 def plotagem(senoide):
     plt.plot(senoide)
