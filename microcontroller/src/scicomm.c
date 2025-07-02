@@ -65,8 +65,9 @@ void protocolSendWaveForm(unsigned int sci_base, float waveform[])
 
         uint16_t txBuf[4];
 
-        txBuf[0] = (uint16_t)(parte_inteira & 0x00FF);
-        txBuf[1] = (uint16_t)((parte_inteira >> 8U) & 0x00FF);
+        // Operador & = E
+        txBuf[0] = (uint16_t)(parte_inteira & 0x00FF); // MSB = Mais significativo
+        txBuf[1] = (uint16_t)((parte_inteira >> 8U) & 0x00FF); // LSB = Menos significativo
         txBuf[2] = (uint16_t)(parte_decimal & 0x00FF);
         txBuf[3] = (uint16_t)((parte_decimal >> 8U) & 0x00FF);
 
